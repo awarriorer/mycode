@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>cros-upload示例</title>
+</head>
+<body>
+	<input type="file" id="but">
+
+	<script type="text/javascript">
+
+		window.onload = function(){
+			console.log("window.onload");
+
+			let but = document.querySelector("#but");
+
+			but.onchange = function(e){
+				let options = {
+					methods: 'post',
+					data:{
+						image: e.target.files[0],
+					},
+					url: 'http://dev.example.com/upload-image',
+				};
+
+				request(options, function(percent){
+					// 上传进度
+		            console.log("api中的输出---已经上传" + percent);
+				}, function(res){
+					console.log('cors...响应');
+					console.log(res.data);
+
+					// 把照片渲染到body
+					if(res.status){
+						var image = new Image();
+			            image.src = res.data;
+
+			           document.body.appendChild(image)
+					}
+
+				})
+			}
+		}
+
+		function request(options, process, next){
+			var xhr = new XMLHttpRequest();
+			var methods = options.methods.toLocaleUpperCase();
+
+			// 异步传输
+			xhr.open(methods, options.url, true);
+
+			//创建form对象
+			var formData = new FormData();
+
+			let data = options.data || {};
+
+			for(let key in data){
+				formData.append(key, data[key]);
+			}
+
+			xhr.upload.onprogress = function (ev) {//
+		        var percent = 0; 
+
+		        if(ev.lengthComputable) {
+		            percent = 100 * ev.loaded / ev.total;
+				}
+
+				process && process(percent);
+			}
+
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+					let response = xhr.responseText;
+
+					response = JSON.parse(response);
+
+					// 请求结束后,在此处写处理代码
+					next(response)
+				}
+			}
+			//发送请求
+			xhr.send(formData);
+		}
+	</script>
+</body>
+</html>
