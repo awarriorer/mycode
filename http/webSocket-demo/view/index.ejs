@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>web socket demo</title>
+
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		ul{
+			list-style: none;
+		}
+
+		html, body{
+			width: 100%;
+			height: 100%;
+		}
+
+		.container{
+			width: 40%;
+			height: 100%;
+			margin: 0 auto;
+			top: 0;
+			background-color: #f1f1f1;
+
+			display: flex;
+			flex-direction: column;
+
+		}
+
+		.ul-con{
+			height: 1px;
+			flex: 1;
+		}
+
+		.footer{
+			width: 100%;
+			height: 60px;
+			display: flex;
+			background-color: rgba(0,0,0,0.5);
+		}
+
+		.name{
+			width: 100px;
+		}
+
+		.word{
+			width: 1px;
+			flex: 1;
+			padding-left: 20px;
+		}
+
+		input{
+			width: 100%;
+			height: 40px;
+		}
+	</style>
+</head>
+<body>
+	<section class="container" id="app">
+		<ul class="ul-con">
+			<li v-for="(item, index) in renderArr" :key="index">
+				<div class="name">{{item.name}}</div>
+				<div class="chat-word">{{item.word}}</div>
+			</li>
+		</ul>
+		<ul class="footer">
+			<li class="name">
+				<input placeholder="名称" type="text" v-model="name">
+			</li>
+			<li class="word">
+				<input placeholder="内容" type="text" v-model="word" @keyup.enter="sendMessage">
+			</li>
+		</ul>
+	</section>
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdn.staticfile.org/socket.io/2.2.0/socket.io.dev.js"></script>
+
+	<script>
+		
+		var vueComp = {
+			el: '#app',
+			data: function(){
+				return {
+					renderArr: [
+						{
+							name: 'uncle-yang',
+							word: '124'
+						}
+					],
+
+					name: '',
+					word: '',
+
+					ws: null,
+
+					uid: '',
+				}
+			},
+
+			methods:{
+				startListen(){
+					let ws = io.connect("ws://127.0.0.1:3500");
+
+					// 打开
+					ws.on('chat message', (res)=>{
+						this.renderArr.push(JSON.parse(res));
+					});
+
+					this.ws = ws;
+				},
+
+				sendMessage(){
+					let opt = {
+						name: this.name,
+						word: this.word,
+						uid: this.uid,
+					}
+					console.log(opt);
+					
+					this.ws.emit('chat message', JSON.stringify(opt));
+				},
+
+				getUid() {
+					return new Date().getTime()+""+Math.floor(Math.random()*899+100);
+				}
+			},
+
+			created(){
+				this.uid = this.getUid();
+
+				this.startListen();
+			}
+		};
+
+		var app = new Vue(vueComp)
+
+	</script>
+
+</body>
+</html>
