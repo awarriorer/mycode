@@ -1,0 +1,29 @@
+{
+  "name": "webpack4-default-cfg",
+  "version": "1.0.0",
+  "description": "默认配置",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server",
+    "build:dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "author": "uncle-yang",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/runtime": "^7.3.4",
+    "babel-loader": "^8.0.5",
+    "case-sensitive-paths-webpack-plugin": "^2.2.0",
+    "copy-webpack-plugin": "^5.0.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0"
+  }
+}
